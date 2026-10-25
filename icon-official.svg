@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="StudyPilot official app icon">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1d33"/>
+      <stop offset="100%" stop-color="#091726"/>
+    </linearGradient>
+    <linearGradient id="symbolGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c8ecff"/>
+      <stop offset="28%" stop-color="#9ed8ff"/>
+      <stop offset="62%" stop-color="#78b9ff"/>
+      <stop offset="100%" stop-color="#5d8eff"/>
+    </linearGradient>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a7d9ff"/>
+      <stop offset="60%" stop-color="#7ab7ff"/>
+      <stop offset="100%" stop-color="#5b8cff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGlow)"/>
+
+  <g transform="translate(0 4)">
+    <path d="M116 190 C 74 159, 63 98, 101 77 C 123 64, 149 72, 170 91 C 154 99, 137 109, 124 126 C 112 143, 107 164, 116 190 Z" fill="url(#wingGrad)" opacity="0.95"/>
+    <path d="M389 188 C 429 157, 443 98, 406 76 C 382 62, 355 72, 334 91 C 352 99, 370 110, 384 128 C 397 146, 402 164, 389 188 Z" fill="url(#wingGrad)" opacity="0.95"/>
+
+    <path d="M325 142 C 363 104, 413 88, 355 72 C 272 48, 224 120, 219 165 C 212 219, 277 243, 311 252 C 348 263, 357 299, 334 332 C 312 363, 254 383, 198 372 C 161 365, 122 343, 101 318" fill="none" stroke="url(#symbolGrad)" stroke-width="74" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <path d="M151 236 C 185 242, 224 265, 240 300 C 258 342, 237 382, 182 399 C 132 416, 84 402, 69 368 C 56 338, 83 312, 121 307" fill="none" stroke="url(#symbolGrad)" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
