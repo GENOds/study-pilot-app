@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b2d5a" />
+    <meta
+      name="description"
+      content="StudyPilot — smart AI study app for summaries, concept maps, quizzes, sticky notes, and premium study packs."
+    />
+    <title>StudyPilot</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">S</div>
+          <div class="brand-text">StudyPilot</div>
+        </div>
+
+        <nav class="top-nav">
+          <button class="nav-link active">Home</button>
+          <button class="nav-link">Study flow</button>
+          <button class="nav-link">Premium</button>
+        </nav>
+
+        <div class="top-actions">
+          <button class="ghost-btn" id="freeModeBtn">Free</button>
+          <button class="primary-btn" id="premiumBtn">Premium $2.99/mo</button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="hero section">
+          <div class="hero-copy">
+            <div class="eyebrow">Built for every learner</div>
+            <h1>Study smarter. Not harder.</h1>
+            <p>
+              Turn questions, notes, photos, and random sparks of curiosity into
+              summaries, concept maps, quick quizzes, and calm revision sessions.
+            </p>
+
+            <div class="cta-row">
+              <button class="primary-btn large" id="startFreeBtn">Start free</button>
+              <button class="ghost-btn large" id="startPremiumBtn">Try Premium</button>
+            </div>
+
+            <div class="badge-row">
+              <span>✓ No login</span>
+              <span>✓ Smart AI coaching</span>
+              <span>✓ Friendly corrections</span>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="chat-window">
+              <div class="chat-header">
+                <span>StudyPilot AI</span>
+                <div class="online-pill"><span class="dot"></span> Online</div>
+              </div>
+
+              <div class="chat-messages">
+                <div class="message user">
+                  <div class="bubble">Make a 5-minute review for Roman Empire.</div>
+                </div>
+                <div class="message ai">
+                  <div class="bubble">
+                    Absolutely. I’ll turn it into a quick recap, a concept map, and a tiny quiz.
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-actions">
+                <span>Summary</span>
+                <span>Map</span>
+                <span>Quiz</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="features section">
+          <div class="section-head">
+            <div>
+              <h2>Everything you need</h2>
+            </div>
+            <p>Simple enough to use, strong enough to help.</p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon">🧠</div>
+              <h3>Concept maps</h3>
+              <p>
+                Turn a topic, a paragraph, or a message like “The Defenestration of Prague” into
+                a visual map.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">📸</div>
+              <h3>Book photo summary</h3>
+              <p>
+                Upload a book page or handwritten note and get a clean, understandable summary in
+                seconds.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🧪</div>
+              <h3>Smart quiz</h3>
+              <p>
+                Create a test from any topic or from your recent study thread and learn with
+                instant feedback.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🎙️</div>
+              <h3>Voice mode</h3>
+              <p>
+                Ask out loud, answer in real time, and let StudyPilot guide you through a calm
+                session.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="study-flow section">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Today’s study plan</h3>
+              <span class="tag">Adaptive</span>
+            </div>
+
+            <div class="lesson-card">
+              <div class="lesson-top">
+                <span>AI lesson</span>
+                <span>12 min</span>
+              </div>
+              <h4>Roman Empire: rise, structure, and decline</h4>
+              <div class="lesson-meta">
+                <span>Summary</span>
+                <span>Concept map</span>
+                <span>Quiz</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel sticky-panel">
+            <div class="panel-header">
+              <h3>Sticky notes</h3>
+              <button id="addNoteBtn" class="postit-btn">＋</button>
+            </div>
+
+            <div class="note-grid" id="notesGrid"></div>
+          </div>
+        </section>
+
+        <section class="quiz-section section">
+          <div class="quiz-card">
+            <div class="quiz-header">
+              <div>
+                <span class="eyebrow small">Challenge</span>
+                <h3>Quick quiz</h3>
+              </div>
+              <div class="timer-box">⏱ 18s</div>
+            </div>
+
+            <p class="question" id="questionText">
+              Which Roman achievement most directly helped long-distance communication and
+              administration?
+            </p>
+
+            <div class="options" id="optionsList">
+              <button class="option-btn" data-answer="wrong">Roman mosaics</button>
+              <button class="option-btn correct" data-answer="correct">Roman roads</button>
+              <button class="option-btn" data-answer="wrong">Roman temples</button>
+              <button class="option-btn" data-answer="wrong">Roman statues</button>
+            </div>
+
+            <div class="quiz-footer">
+              <div id="feedbackText">Choose an answer and I’ll tell you the truth — gently.</div>
+              <button class="primary-btn small" id="checkAnswerBtn">Check answer</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="premium-block section">
+          <div class="premium-copy">
+            <span class="eyebrow">Premium Study</span>
+            <h2>More support, calmer focus, smarter review.</h2>
+            <p>
+              Calm soundtracks, voice conversations, 5-minute review sessions, and more weekly
+              practice.
+            </p>
+          </div>
+
+          <div class="plan-card">
+            <div class="plan-header">
+              <h3>PREMIUM-STUDY</h3>
+              <span class="tag">Monthly</span>
+            </div>
+
+            <div class="price">$2.99<span>/month</span></div>
+
+            <ul class="feature-list">
+              <li>Gentle AI-selected study soundtracks</li>
+              <li>Voice chat with StudyPilot</li>
+              <li>5-minute review mode</li>
+              <li>150 exercises per week</li>
+              <li>50 sticky notes and 500 lines each</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>Free vs Premium</h2>
+            <p>Built to help everyone, without pressure.</p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon">🆓</div>
+              <h3>Free</h3>
+              <p>20 exercises per week, 10 sticky notes, and full access to core study tools.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">⭐</div>
+              <h3>Premium</h3>
+              <p>150 exercises per week, voice mode, 5-minute review and expanded note capacity.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">🔊</div>
+              <h3>Focus audio</h3>
+              <p>StudyPilot picks a calm soundtrack automatically and you can pause it instantly.</p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-icon">✨</div>
+              <h3>Friendly coaching</h3>
+              <p>Wrong answers are corrected with humor and clarity, never shame.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section bottom-tools">
+          <div class="tool-card tool-chat">
+            <div class="panel-header">
+              <h3>StudyPilot chat</h3>
+            </div>
+
+            <div class="chat-box" id="chatBox"></div>
+
+            <div class="chat-input-row">
+              <input
+                type="text"
+                id="chatInput"
+                placeholder="Ask StudyPilot anything..."
+                aria-label="Ask StudyPilot anything"
+              />
+              <button id="chatSendBtn" class="primary-btn small">Send</button>
+            </div>
+          </div>
+
+          <div class="tool-card tool-upload">
+            <div class="panel-header">
+              <h3>Photo summary</h3>
+            </div>
+
+            <label class="upload-box">
+              <input type="file" id="photoInput" accept="image/*" />
+              <span>Upload a page, a note, or a book photo</span>
+            </label>
+
+            <div id="photoPreview" class="photo-preview"></div>
+
+            <button id="summarizePhotoBtn" class="ghost-btn wide">Summarize image</button>
+          </div>
+
+          <div class="tool-card tool-map">
+            <div class="panel-header">
+              <h3>Concept map</h3>
+            </div>
+            <div id="conceptMap" class="concept-map"></div>
+            <button id="buildMapBtn" class="ghost-btn wide">Generate map</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>StudyPilot © 2026</div>
+        <div>No login required · English · Mobile-first</div>
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
