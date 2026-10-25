@@ -3,6 +3,7 @@ const state = {
   notes: [],
   exercises: 0,
   weekKey: "study-week",
+  ownerMode: true,
 };
 
 const defaultNotes = [
@@ -65,8 +66,9 @@ function renderNotes() {
   const notesGrid = document.getElementById("notesGrid");
   if (!notesGrid) return;
 
-  const freeLimit = state.premium ? 50 : 10;
-  const noteLinesLimit = state.premium ? 500 : 350;
+  const activePremium = state.ownerMode || state.premium;
+  const freeLimit = activePremium ? 50 : 10;
+  const noteLinesLimit = activePremium ? 500 : 350;
 
   notesGrid.innerHTML = "";
   state.notes.forEach((note) => {
@@ -90,7 +92,7 @@ function renderNotes() {
   addHint.style.setProperty("--tilt", "-0.8deg");
   addHint.innerHTML = `
     <small>Limits</small>
-    <p>${state.premium ? `Premium: ${freeLimit} notes · ${noteLinesLimit} lines` : `Free: ${freeLimit} notes · ${noteLinesLimit} lines`}</p>
+    <p>${activePremium ? `Owner mode: ${freeLimit} notes · ${noteLinesLimit} lines` : `Free: ${freeLimit} notes · ${noteLinesLimit} lines`}</p>
   `;
   notesGrid.appendChild(addHint);
 }
@@ -105,10 +107,11 @@ function initializeNotes() {
 }
 
 document.getElementById("addNoteBtn").addEventListener("click", () => {
+  const activePremium = state.ownerMode || state.premium;
   const count = state.notes.length;
-  const maxNotes = state.premium ? 50 : 10;
+  const maxNotes = activePremium ? 50 : 10;
   if (count >= maxNotes) {
-    alert(`You’ve reached the limit for ${state.premium ? "Premium" : "Free"} notes.`);
+    alert(`You’ve reached the limit for ${activePremium ? "Owner/Premium" : "Free"} notes.`);
     return;
   }
 
@@ -124,6 +127,13 @@ document.getElementById("addNoteBtn").addEventListener("click", () => {
 });
 
 document.getElementById("premiumBtn").addEventListener("click", () => {
+  if (state.ownerMode) {
+    state.premium = true;
+    renderNotes();
+    renderChatMessage("ai", "Owner mode is active. Premium features are unlocked for you.");
+    return;
+  }
+
   state.premium = !state.premium;
   document.body.classList.toggle("premium-on", state.premium);
   renderNotes();
@@ -155,6 +165,25 @@ function renderChatMessage(role, text) {
   bubble.textContent = text;
   chatBox.appendChild(bubble);
   chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function askAI(message) {
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+
+    if (!response.ok) {
+      throw new Error('AI backend unavailable');
+    }
+
+    const data = await response.json();
+    return data.reply || 'I’m ready when you are.';
+  } catch (error) {
+    return 'The AI backend is not connected yet. Add your Gemini key in the .env file to enable real responses.';
+  }
 }
 
 function handleAIReply(prompt) {
@@ -190,10 +219,10 @@ function handleAIReply(prompt) {
     return "Premium unlocks voice mode, calm background audio, and expanded exercise capacity. It costs $2.99/month.";
   }
 
-  return "Got it. I can explain it simply, make a concept map, create a quiz, or turn it into a short 5-minute recap.";
+  return askAI(prompt);
 }
 
-document.getElementById("chatSendBtn").addEventListener("click", () => {
+document.getElementById("chatSendBtn").addEventListener("click", async () => {
   const input = document.getElementById("chatInput");
   const value = input.value.trim();
   if (!value) return;
@@ -201,13 +230,13 @@ document.getElementById("chatSendBtn").addEventListener("click", () => {
   renderChatMessage("user", value);
   input.value = "";
 
-  const reply = handleAIReply(value);
-  setTimeout(() => renderChatMessage("ai", reply), 250);
+  const reply = await handleAIReply(value);
+  renderChatMessage("ai", reply);
 });
 
-document.getElementById("chatInput").addEventListener("keydown", (event) => {
+document.getElementById("chatInput").addEventListener("keydown", async (event) => {
   if (event.key === "Enter") {
-    document.getElementById("chatSendBtn").click();
+    await document.getElementById("chatSendBtn").click();
   }
 });
 
@@ -263,7 +292,7 @@ document.getElementById("checkAnswerBtn").addEventListener("click", () => {
   }
 });
 
-document.getElementById("buildMapBtn").addEventListener("click", () => {
+document.getElementById("buildMapBtn").addEventListener("click", async () => {
   const map = document.getElementById("conceptMap");
   if (!map) return;
 
@@ -283,9 +312,28 @@ document.getElementById("buildMapBtn").addEventListener("click", () => {
     item.textContent = node;
     map.appendChild(item);
   });
+
+  try {
+    const response = await fetch('/api/concept-map', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: 'Roman Empire' })
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const resultText = document.createElement('div');
+      resultText.textContent = data.result || 'Map ready.';
+      resultText.style.gridColumn = '1 / -1';
+      resultText.style.fontSize = '0.82rem';
+      resultText.style.opacity = '0.8';
+      map.appendChild(resultText);
+    }
+  } catch (error) {
+    // optional fallback: no-op
+  }
 });
 
-document.getElementById("summarizePhotoBtn").addEventListener("click", () => {
+document.getElementById("summarizePhotoBtn").addEventListener("click", async () => {
   const preview = document.getElementById("photoPreview");
   const file = document.getElementById("photoInput").files[0];
 
@@ -295,13 +343,32 @@ document.getElementById("summarizePhotoBtn").addEventListener("click", () => {
   }
 
   const reader = new FileReader();
-  reader.onload = (event) => {
-    preview.innerHTML = `<img src="${event.target.result}" alt="Uploaded study page" />`;
+  reader.onload = async (event) => {
+    const dataUrl = event.target.result;
+    preview.innerHTML = `<img src="${dataUrl}" alt="Uploaded study page" />`;
     preview.classList.add("visible");
+
+    try {
+      const response = await fetch('/api/image-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image: {
+            base64: dataUrl.split(',')[1],
+            mimeType: file.type || 'image/jpeg'
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        renderChatMessage('ai', data.summary || 'Here is the key idea from the image.');
+      }
+    } catch (error) {
+      renderChatMessage('ai', 'Image summarization is waiting for a Gemini API key.');
+    }
   };
   reader.readAsDataURL(file);
-
-  renderChatMessage("ai", `I’ve looked at the image. Key ideas: thesis, evidence, and core conclusions. I can summarize it into a short study note and a quiz.`);
 });
 
 document.getElementById("photoInput").addEventListener("change", (event) => {
@@ -334,12 +401,22 @@ function seedChat() {
   chatSeed.forEach((entry) => renderChatMessage(entry.role, entry.text));
 }
 
-function boot() {
+async function boot() {
   initializeNotes();
   seedChat();
   renderQuiz();
   renderNotes();
   renderChatMessage("ai", "Hi! I’m StudyPilot. Ask me anything — summary, quiz, concept map, or quick recap.");
+
+  try {
+    const result = await fetch('/api/health');
+    const data = await result.json();
+    if (!data.hasGemini) {
+      renderChatMessage('ai', 'Gemini free API is not configured yet. Add your key to .env to enable real AI responses.');
+    }
+  } catch (error) {
+    // backend not running locally yet, ignore
+  }
 }
 
 boot();
